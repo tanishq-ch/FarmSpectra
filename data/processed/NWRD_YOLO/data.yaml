@@ -1,0 +1,6 @@
+
+path: /content/NWRD_YOLO
+train: train/images
+val: val/images
+names:
+  0: Wheat_Rust
