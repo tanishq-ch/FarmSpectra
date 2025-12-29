@@ -9,7 +9,6 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![YOLOv8](https://img.shields.io/badge/YOLOv8-Ultralytics-purple.svg)](https://github.com/ultralytics/ultralytics)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 [Features](#-key-features) • [Installation](#-installation) • [Usage](#-usage) • [Model Training](#-model-training) • [Demo](#-demo) • [Contributing](#-contributing)
 
@@ -572,10 +571,6 @@ response = client.models.generate_content(
 
 ---
 
----
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions from the community! Here's how you can help:
@@ -619,8 +614,6 @@ git push origin feature/amazing-feature
 
 ---
 
----
-
 ## 🙏 Acknowledgments
 
 ### 🛠️ Open Source Projects
@@ -651,8 +644,6 @@ Found a bug? Have a suggestion?
 
 ---
 
-
-```
 
 ---
 
