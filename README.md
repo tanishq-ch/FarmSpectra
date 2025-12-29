@@ -178,7 +178,7 @@ graph TB
 ## 📁 Project Structure
 
 ```
-DISEASE_FINALYEAR/
+FarmSpectra/
 │
 ├── 📂 data/
 │   ├── 📂 processed/
@@ -247,8 +247,8 @@ DISEASE_FINALYEAR/
 #### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/farmspectra.git
-cd farmspectra
+git clone https://github.com/yourusername/FarmSpectra.git
+cd FarmSpectra
 ```
 
 #### 2️⃣ Create Virtual Environment
@@ -641,9 +641,6 @@ Found a bug? Have a suggestion?
 [⬆ Back to Top](#-farmspectra---ai-powered-crop-disease--weed-detection-system)
 
 </div>
-
----
-
 
 ---
 
