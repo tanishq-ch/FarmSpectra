@@ -572,66 +572,7 @@ response = client.models.generate_content(
 
 ---
 
-## 📊 Performance Metrics
-
-### 🎯 Disease Detection Model
-
-| Metric | Value | Description |
-|--------|-------|-------------|
-| **mAP@0.5** | 92.3% | Mean Average Precision at 0.5 IoU |
-| **Precision** | 89.7% | True positive rate |
-| **Recall** | 94.2% | Detection rate |
-| **Inference Time** | ~150ms | On NVIDIA RTX 3060 |
-| **Model Size** | 52 MB | YOLOv8m-seg |
-
-### 🌿 Weed Detection Model
-
-| Metric | Value | Description |
-|--------|-------|-------------|
-| **mAP@0.5** | 87.5% | Mean Average Precision |
-| **Precision** | 85.2% | True positive rate |
-| **Recall** | 91.8% | Detection rate |
-| **Inference Time** | ~100ms | On NVIDIA RTX 3060 |
-| **Model Size** | 49 MB | YOLOv8m |
-
-### 🚀 System Performance
-
-- **Image Processing**: < 2 seconds for 1600px images
-- **Report Generation**: < 1 second PDF creation
-- **AI Q&A Response**: < 3 seconds with Gemini
-- **Concurrent Users**: Supports 10+ simultaneous sessions
-
 ---
-
-## 🗺️ Roadmap
-
-### ✅ Completed (v1.0)
-
-- [x] Disease detection with segmentation
-- [x] Weed detection with bounding boxes
-- [x] ExG heatmap generation
-- [x] Bilingual Q&A system
-- [x] PDF report generation
-- [x] Streamlit web interface
-
-### 🚧 In Progress (v1.5)
-
-- [ ] Mobile app development (React Native)
-- [ ] Real-time video processing
-- [ ] Multi-crop support (rice, corn)
-- [ ] Field history tracking
-- [ ] Weather integration
-
-### 🔮 Future Plans (v2.0)
-
-- [ ] Drone imagery support
-- [ ] Satellite image analysis
-- [ ] Automated spray system integration
-- [ ] Farmer community platform
-- [ ] Multi-language support (5+ languages)
-- [ ] Offline mode with edge deployment
-- [ ] Yield prediction models
-- [ ] Soil health analysis
 
 ---
 
@@ -678,33 +619,9 @@ git push origin feature/amazing-feature
 
 ---
 
-## 📜 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2024 FarmSpectra Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software")...
-```
-
 ---
 
 ## 🙏 Acknowledgments
-
-### 📚 Datasets
-
-- **NWRD Dataset** - National Wheat Rust Detection dataset
-- **Agricultural Research Organizations** - For providing training data
-
-### 🔬 Research Papers
-
-1. "Deep Learning for Plant Disease Detection" - IEEE 2023
-2. "YOLO-based Weed Detection in Agricultural Fields" - MDPI 2024
-3. "ExG Index for Vegetation Analysis" - Remote Sensing 2022
 
 ### 🛠️ Open Source Projects
 
@@ -712,45 +629,13 @@ of this software and associated documentation files (the "Software")...
 - [Streamlit](https://streamlit.io/) - Web app framework
 - [Google Gemini](https://ai.google.dev/) - AI language model
 
-### 👥 Contributors
-
-Special thanks to all contributors who have helped shape FarmSpectra!
-
-<a href="https://github.com/yourusername/farmspectra/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=yourusername/farmspectra" />
-</a>
 
 ---
-
-## 📞 Contact & Support
-
-### 📧 Get in Touch
-
-- **Email**: support@farmspectra.com
-- **Website**: [www.farmspectra.com](https://farmspectra.com)
-- **Documentation**: [docs.farmspectra.com](https://docs.farmspectra.com)
-
-### 💬 Community
-
-- **Discord**: [Join our Discord](https://discord.gg/farmspectra)
-- **Twitter**: [@FarmSpectra](https://twitter.com/farmspectra)
-- **LinkedIn**: [FarmSpectra](https://linkedin.com/company/farmspectra)
 
 ### 🐛 Issue Tracker
 
 Found a bug? Have a suggestion?  
 [Open an issue on GitHub](https://github.com/yourusername/farmspectra/issues)
-
----
-
-## 📈 Project Stats
-
-![GitHub stars](https://img.shields.io/github/stars/yourusername/farmspectra?style=social)
-![GitHub forks](https://img.shields.io/github/forks/yourusername/farmspectra?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/yourusername/farmspectra?style=social)
-![GitHub issues](https://img.shields.io/github/issues/yourusername/farmspectra)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/yourusername/farmspectra)
-![GitHub last commit](https://img.shields.io/github/last-commit/yourusername/farmspectra)
 
 ---
 
@@ -766,17 +651,7 @@ Found a bug? Have a suggestion?
 
 ---
 
-## 📝 Citation
 
-If you use FarmSpectra in your research, please cite:
-
-```bibtex
-@software{farmspectra2024,
-  title={FarmSpectra: AI-Powered Crop Disease and Weed Detection System},
-  author={FarmSpectra Team},
-  year={2024},
-  url={https://github.com/yourusername/farmspectra}
-}
 ```
 
 ---
