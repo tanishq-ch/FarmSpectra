@@ -504,9 +504,12 @@ response = client.models.generate_content(
 
 </div>
 
-### 🔬 Disease Detection Interface
+### 🔬 Disease Detection Interface  
 
-<div align="center">
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/90eb619b-e750-4078-be24-d9664fefe34a" width="45%" />
+  <img src="https://github.com/user-attachments/assets/143db796-8b67-4a9a-98e8-4df983908d89" width="45%" />
+</p>
 
 *Disease detection results with severity metrics and visualizations*
 
