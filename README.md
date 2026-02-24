@@ -496,6 +496,8 @@ response = client.models.generate_content(
 
 ### 🏠 Home Dashboard
 
+<img width="1852" height="947" alt="image" src="https://github.com/user-attachments/assets/85eb4317-0fe1-4f40-807c-3f04ff2d6c93" />
+
 <div align="center">
 
 *Main navigation interface with module selection*
