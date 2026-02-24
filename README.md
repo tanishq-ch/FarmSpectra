@@ -533,6 +533,8 @@ response = client.models.generate_content(
 
 ### 📄 PDF Report Sample
 
+<img width="933" height="845" alt="image" src="https://github.com/user-attachments/assets/a6e5e28c-fa83-4cad-8ae0-254d6f7d652a" />
+
 <div align="center">
 
 *Professional downloadable report with recommendations*
