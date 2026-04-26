@@ -1703,7 +1703,741 @@
 
 
 
-# NEW new claude code 
+# code (final)
+
+# import streamlit as st
+# import os
+# import cv2
+# import numpy as np
+# import matplotlib.pyplot as plt
+# import matplotlib.patches as patches
+# from ultralytics import YOLO
+# import tempfile
+# from datetime import datetime
+# from io import BytesIO
+# from reportlab.lib.pagesizes import letter
+# from reportlab.lib import colors
+# from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+# from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+# from reportlab.lib.units import inch
+# from google import genai
+# from dotenv import load_dotenv
+# load_dotenv()
+# # =================================================
+# # PAGE CONFIG
+# # =================================================
+# # st.set_page_config(
+# #     page_title="FarmSpectra – Crop Disease Detection System",
+# #     layout="wide",
+# #     initial_sidebar_state="collapsed"
+# # )
+
+# def run_disease_detection():
+# # =================================================
+# # INTERACTIVE UI STYLING
+# # =================================================
+#     st.markdown("""
+#     <style>
+#     .stApp, html, body, [class*="css"], [data-testid="stAppViewContainer"], [data-testid="stMain"] {
+#         background-color: #ffffff !important;
+#         color: #000000 !important;
+#     }
+
+#     section.main > div, .block-container {
+#         background-color: #ffffff !important;
+#         padding: 25px 35px !important;
+#     }
+
+#     .main-header {
+#         background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+#         color: #ffffff;
+#         padding: 20px 28px;
+#         margin: 0px 0px 25px 0px;
+#         font-size: 20px;
+#         font-weight: 600;
+#         letter-spacing: 0.5px;
+#         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+#     }
+
+#     .section-box {
+#         background: #ffffff;
+#         border: 1.5px solid #e0e0e0;
+#         border-radius: 10px;
+#         padding: 24px 28px;
+#         margin-bottom: 20px;
+#         transition: all 0.3s ease;
+#         box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+#     }
+
+#     .section-box:hover {
+#         box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+#         border-color: #2a5298;
+#     }
+
+#     .section-title {
+#         font-size: 17px;
+#         font-weight: 700;
+#         color: #1e3c72;
+#         margin-bottom: 18px;
+#     }
+
+#     .stFileUploader > div > div {
+#         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+#         border: 3px dashed #ffffff !important;
+#         border-radius: 12px !important;
+#         padding: 40px 20px !important;
+#     }
+
+#     .stFileUploader label {
+#         color: #ffffff !important;
+#         font-size: 14px !important;
+#         font-weight: 600 !important;
+#     }
+
+#     .file-display {
+#         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+#         color: #ffffff;
+#         border-radius: 8px;
+#         padding: 14px 18px;
+#         margin: 14px 0;
+#         font-size: 14px;
+#         font-weight: 600;
+#         box-shadow: 0 4px 12px rgba(245,87,108,0.3);
+#     }
+
+#     .status-healthy {
+#         background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+#         border-left: 5px solid #28a745;
+#         padding: 16px 20px;
+#         border-radius: 8px;
+#         color: #155724;
+#         font-size: 16px;
+#         font-weight: 600;
+#         box-shadow: 0 4px 12px rgba(40,167,69,0.2);
+#     }
+
+#     .status-warning {
+#         background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+#         border-left: 5px solid #ff9800;
+#         padding: 16px 20px;
+#         border-radius: 8px;
+#         color: #663c00;
+#         font-size: 16px;
+#         font-weight: 600;
+#         box-shadow: 0 4px 12px rgba(255,152,0,0.2);
+#     }
+
+#     .status-danger {
+#         background: linear-gradient(135deg, #ffeaa7 0%, #ff6b6b 100%);
+#         border-left: 5px solid #dc3545;
+#         padding: 16px 20px;
+#         border-radius: 8px;
+#         color: #721c24;
+#         font-size: 16px;
+#         font-weight: 600;
+#         box-shadow: 0 4px 12px rgba(220,53,69,0.2);
+#     }
+
+#     .metric-card {
+#         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+#         border: 2px solid #e0e0e0;
+#         border-radius: 12px;
+#         padding: 24px 20px;
+#         text-align: center;
+#         margin-bottom: 16px;
+#         transition: all 0.3s ease;
+#     }
+
+#     .metric-card:hover {
+#         transform: translateY(-5px);
+#         box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+#         border-color: #2a5298;
+#     }
+
+#     .metric-label {
+#         font-size: 13px;
+#         color: #555555;
+#         margin-bottom: 12px;
+#         font-weight: 600;
+#     }
+
+#     .metric-value {
+#         font-size: 42px;
+#         font-weight: 800;
+#         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+#         -webkit-background-clip: text;
+#         -webkit-text-fill-color: transparent;
+#         background-clip: text;
+#         line-height: 1;
+#     }
+
+#     .info-box {
+#         background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+#         border-left: 5px solid #2196F3;
+#         padding: 14px 18px;
+#         border-radius: 8px;
+#         margin: 16px 0;
+#         font-size: 14px;
+#         color: #014361;
+#         font-weight: 500;
+#     }
+
+#     .info-box-warning {
+#         background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+#         border-left-color: #ff9800;
+#         color: #663c00;
+#     }
+
+#     .hindi-text {
+#         font-family: 'Noto Sans Devanagari', sans-serif;
+#         font-size: 15px;
+#         line-height: 1.8;
+#         color: #2c3e50;
+#     }
+
+#     .stDownloadButton button {
+#         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+#         border: none !important;
+#         color: #ffffff !important;
+#         font-weight: 600 !important;
+#         padding: 12px 24px !important;
+#         border-radius: 8px !important;
+#         font-size: 14px !important;
+#         box-shadow: 0 4px 12px rgba(102,126,234,0.4) !important;
+#         transition: all 0.3s ease !important;
+#     }
+
+#     .stDownloadButton button:hover {
+#         transform: translateY(-2px) !important;
+#         box-shadow: 0 6px 16px rgba(102,126,234,0.5) !important;
+#     }
+
+#     .stProgress > div > div > div {
+#         background: linear-gradient(90deg, #28a745 0%, #ffc107 50%, #dc3545 100%) !important;
+#         height: 14px !important;
+#     }
+
+#     .streamlit-expanderHeader {
+#         background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+#         border-radius: 8px !important;
+#         font-weight: 600 !important;
+#     }
+
+#     footer {visibility: hidden;}
+#     </style>
+#     """, unsafe_allow_html=True)
+
+#     # =================================================
+#     # HEADER
+#     # =================================================
+#     st.markdown("""
+#     <div class="main-header">
+#         🌾 FarmSpectra – Crop Disease Detection System
+#     </div>
+#     """, unsafe_allow_html=True)
+
+#     # =================================================
+#     # LOAD MODEL
+#     # =================================================
+#     MODEL_PATH = "models/trained/best.pt"
+
+#     if not os.path.exists(MODEL_PATH):
+#         st.error("❌ Model file not found: models/trained/best.pt")
+#         st.stop()
+
+#     model = YOLO(MODEL_PATH)
+
+#     # =================================================
+#     # HINDI Q&A DATASET
+#     # =================================================
+#     QA_DATA = {
+#         "What is wheat rust disease?": {
+#             "en": "Wheat rust is a fungal disease caused by Puccinia species that affects wheat crops, creating orange-brown pustules on leaves and stems, reducing yield by up to 50%.",
+#             "hi": "गेहूं का रस्ट एक कवक रोग है जो पुक्सीनिया प्रजाति के कारण होता है और गेहूं की फसलों को प्रभावित करता है, पत्तियों और तनों पर नारंगी-भूरे रंग के धब्बे बनाता है, जिससे उपज में 50% तक की कमी हो सकती है।"
+#         },
+#         "How to prevent rust in wheat?": {
+#             "en": "Use resistant wheat varieties, maintain proper spacing for air circulation, avoid excess irrigation, apply preventive fungicides, and remove infected plant debris.",
+#             "hi": "प्रतिरोधी गेहूं किस्मों का उपयोग करें, हवा के संचार के लिए उचित दूरी बनाए रखें, अत्यधिक सिंचाई से बचें, निवारक कवकनाशी लगाएं, और संक्रमित पौधों के अवशेषों को हटाएं।"
+#         },
+#         "When to apply fungicide?": {
+#             "en": "Apply fungicide at first sign of infection (when 10-15% of plants show symptoms) or preventively during high-risk periods (high humidity, temperatures 15-22°C).",
+#             "hi": "संक्रमण के पहले संकेत पर कवकनाशी लगाएं (जब 10-15% पौधे लक्षण दिखाएं) या उच्च जोखिम अवधि (उच्च आर्द्रता, 15-22°C तापमान) के दौरान निवारक रूप से।"
+#         },
+#         "What fungicides work for rust?": {
+#             "en": "Effective fungicides include Propiconazole, Tebuconazole, Triazole-based fungicides, and Strobilurin fungicides. Always follow recommended dosage and consult local agricultural experts.",
+#             "hi": "प्रभावी कवकनाशी में प्रोपिकोनाज़ोल, टेबुकोनाज़ोल, ट्रायज़ोल-आधारित कवकनाशी और स्ट्रोबिलुरिन कवकनाशी शामिल हैं। हमेशा अनुशंसित खुराक का पालन करें और स्थानीय कृषि विशेषज्ञों से परामर्श करें।"
+#         },
+#         "Can I still harvest infected wheat?": {
+#             "en": "Yes, but yield and quality will be reduced. Harvest as soon as possible to minimize further losses. Severely infected grain may need to be sold at lower prices or used for animal feed.",
+#             "hi": "हां, लेकिन उपज और गुणवत्ता कम होगी। आगे के नुकसान को कम करने के लिए जितनी जल्दी हो सके कटाई करें। गंभीर रूप से संक्रमित अनाज को कम कीमत पर बेचना पड़ सकता है या पशु चारे के लिए उपयोग करना पड़ सकता है।"
+#         },
+#         "How does weather affect rust?": {
+#             "en": "Rust thrives in moderate temperatures (15-22°C), high humidity (70%+), and frequent dew. Dry, hot weather (>30°C) slows disease spread. Monitor weather forecasts for early intervention.",
+#             "hi": "रस्ट मध्यम तापमान (15-22°C), उच्च आर्द्रता (70%+), और बार-बार ओस में पनपता है। शुष्क, गर्म मौसम (>30°C) रोग के प्रसार को धीमा करता है। शीघ्र हस्तक्षेप के लिए मौसम पूर्वानुमान की निगरानी करें।"
+#         }
+#     }
+
+#     # =================================================
+#     # PDF REPORT GENERATION FUNCTION
+#     # =================================================
+#     def generate_pdf_report(severity, num_detections, risk, summary_text, recommendations, timestamp):
+#         buffer = BytesIO()
+#         doc = SimpleDocTemplate(buffer, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
+#         story = []
+#         styles = getSampleStyleSheet()
+        
+#         title_style = ParagraphStyle(
+#             'CustomTitle',
+#             parent=styles['Heading1'],
+#             fontSize=24,
+#             textColor=colors.HexColor('#1e3c72'),
+#             spaceAfter=30,
+#             alignment=1
+#         )
+        
+#         heading_style = ParagraphStyle(
+#             'CustomHeading',
+#             parent=styles['Heading2'],
+#             fontSize=16,
+#             textColor=colors.HexColor('#2a5298'),
+#             spaceAfter=12,
+#             spaceBefore=20
+#         )
+        
+#         story.append(Paragraph("FarmSpectra Wheat Rust Detection Report", title_style))
+#         story.append(Spacer(1, 12))
+        
+#         report_date = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+#         story.append(Paragraph(f"<b>Report Generated:</b> {report_date}", styles['Normal']))
+#         story.append(Paragraph(f"<b>Report ID:</b> WR-{timestamp}", styles['Normal']))
+#         story.append(Spacer(1, 20))
+        
+#         story.append(Paragraph("Executive Summary", heading_style))
+#         clean_summary = summary_text.replace("✅", "").replace("⚠️", "").replace("❌", "")
+#         story.append(Paragraph(clean_summary, styles['Normal']))
+#         story.append(Spacer(1, 20))
+        
+#         story.append(Paragraph("Key Metrics", heading_style))
+#         healthy_area = max(0, 100 - severity)
+#         needs_attention = min(severity, 100)
+#         serious_stress = max(0, severity - 15) if severity > 15 else 0
+        
+#         data = [
+#             ['Metric', 'Value', 'Status'],
+#             ['Healthy Area', f'{healthy_area:.0f}%', 'Good' if healthy_area > 70 else 'Warning'],
+#             ['Needs Attention', f'{needs_attention:.0f}%', 'Warning' if needs_attention > 20 else 'Good'],
+#             ['Serious Stress', f'{serious_stress:.0f}%', 'Critical' if serious_stress > 30 else 'Good'],
+#             ['Detected Spots', str(num_detections), 'Critical' if num_detections > 30 else 'Warning' if num_detections > 10 else 'Good'],
+#             ['Risk Level', risk, 'Critical' if 'Severe' in risk else 'Warning']
+#         ]
+        
+#         table = Table(data, colWidths=[2.5*inch, 1.5*inch, 1*inch])
+#         table.setStyle(TableStyle([
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2a5298')),
+#             ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+#             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+#             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+#             ('FONTSIZE', (0, 0), (-1, 0), 12),
+#             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+#             ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+#             ('GRID', (0, 0), (-1, -1), 1, colors.black)
+#         ]))
+#         story.append(table)
+#         story.append(Spacer(1, 20))
+        
+#         story.append(Paragraph("Recommended Actions", heading_style))
+#         for i, rec in enumerate(recommendations, 1):
+#             story.append(Paragraph(f"{i}. {rec}", styles['Normal']))
+#             story.append(Spacer(1, 6))
+        
+#         story.append(Spacer(1, 20))
+#         story.append(Paragraph("Important Notes", heading_style))
+#         story.append(Paragraph(
+#             "This report is generated by AI-powered image analysis. For severe infections, please consult with a certified agricultural extension officer. "
+#             "Results are based on visible symptoms and may not account for all field conditions.",
+#             styles['Italic']
+#         ))
+        
+#         doc.build(story)
+#         buffer.seek(0)
+#         return buffer
+
+#     # =================================================
+#     # ExG FUNCTION
+#     # =================================================
+#     def calculate_exg_heatmap(image_rgb):
+#         img = image_rgb.astype(float)
+#         blue, green, red = img[:, :, 2], img[:, :, 1], img[:, :, 0]
+#         exg = 2 * green - red - blue
+#         exg_norm = cv2.normalize(exg, None, 0, 255, cv2.NORM_MINMAX).astype("uint8")
+#         return 255 - exg_norm
+
+#     # =================================================
+#     # UPLOAD SECTION
+#     # =================================================
+#     st.markdown("""
+#     <div class="section-box">
+#         <div class="section-title">📤 Upload RGB Image</div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+#     uploaded_image = st.file_uploader(
+#         "Drag and drop file here\nLimit 200MB per file • PNG, JPG, JPEG",
+#         type=["jpg", "png", "jpeg"],
+#         label_visibility="visible"
+#     )
+
+#     # =================================================
+#     # MAIN PROCESSING
+#     # =================================================
+#     if uploaded_image is not None:
+        
+#         st.markdown(f"""
+#         <div class="file-display">
+#             📄 {uploaded_image.name} • {uploaded_image.size / (1024*1024):.2f} MB
+#         </div>
+#         """, unsafe_allow_html=True)
+        
+#         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
+#             tmp.write(uploaded_image.read())
+#             img_path = tmp.name
+
+#         original_img = cv2.imread(img_path)
+#         original_img = cv2.cvtColor(original_img, cv2.COLOR_BGR2RGB)
+        
+#         MAX_DIM = 1600
+#         h, w, _ = original_img.shape
+        
+#         if max(h, w) > MAX_DIM:
+#             scale = MAX_DIM / max(h, w)
+#             original_img = cv2.resize(original_img, (int(w * scale), int(h * scale)))
+#             cv2.imwrite(img_path, cv2.cvtColor(original_img, cv2.COLOR_RGB2BGR))
+
+#         with st.spinner("🔄 Analyzing image with AI..."):
+#             results = model(img_path, imgsz=640, conf=0.15, retina_masks=False, verbose=False)[0]
+
+#         overlay_img = original_img.copy()
+#         boxes = []
+#         infected_pixels = 0
+#         total_pixels = original_img.shape[0] * original_img.shape[1]
+
+#         if results.masks is not None and len(results.masks.data) > 0:
+#             masks = results.masks.data.cpu().numpy()
+#             combined_mask = np.sum(masks, axis=0)
+            
+#             if combined_mask is not None and combined_mask.size > 0:
+#                 combined_mask = cv2.resize(combined_mask.astype(np.float32), (original_img.shape[1], original_img.shape[0]))
+#                 infected_pixels = np.sum(combined_mask > 0.5)
+#                 overlay_img[combined_mask > 0.5] = [255, 0, 0]
+#                 boxes = results.boxes.xyxy.cpu().numpy()
+
+#         ai_view = cv2.addWeighted(original_img, 0.7, overlay_img, 0.3, 0)
+
+#         exg = calculate_exg_heatmap(original_img)
+#         clahe = cv2.createCLAHE(clipLimit=4.0, tileGridSize=(8, 8))
+#         exg_enhanced = clahe.apply(exg)
+#         exg_heatmap = cv2.applyColorMap(exg_enhanced, cv2.COLORMAP_JET)
+
+#         os.makedirs("results/exg_heatmaps", exist_ok=True)
+#         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+#         cv2.imwrite(f"results/exg_heatmaps/exg_{timestamp}.png", exg_heatmap)
+
+#         pixel_severity = (infected_pixels / total_pixels) * 100 if infected_pixels > 0 else 0
+#         num_detections = len(boxes)
+        
+#         if num_detections == 0:
+#             detection_severity = 0
+#         elif num_detections <= 5:
+#             detection_severity = 5
+#         elif num_detections <= 15:
+#             detection_severity = 18
+#         elif num_detections <= 30:
+#             detection_severity = 35
+#         else:
+#             detection_severity = 60
+        
+#         severity = max(pixel_severity, detection_severity)
+#         healthy_area = max(0, 100 - severity)
+#         needs_attention = min(severity, 100)
+#         serious_stress = max(0, severity - 15) if severity > 15 else 0
+        
+#         # IMPROVED: More explicit handling for no disease
+#         if num_detections == 0 and pixel_severity < 5:
+#             # No disease detected at all
+#             risk = "No Disease Detected"
+#             status_class = "status-healthy"
+#             summary_text = "✅ No disease detected - Your field appears completely healthy!"
+#             confidence = "High confidence"
+#             recommendations = [
+#                 "✅ No immediate action required",
+#                 "Continue regular field monitoring every 2 weeks",
+#                 "Maintain current irrigation and fertilization practices",
+#                 "Keep records for future comparison"
+#             ]
+#         elif severity < 10:
+#             risk = "Healthy"
+#             status_class = "status-healthy"
+#             summary_text = "✅ Your field is healthy and no disease is detected"
+#             confidence = "High confidence"
+#             recommendations = [
+#                 "Continue regular monitoring",
+#                 "Maintain current irrigation schedule",
+#                 "Schedule next inspection in 2 weeks",
+#                 "Please Check for Nutrient Deficiency and Water Stress"
+#             ]
+#         elif severity < 25:
+#             risk = "Needs Attention"
+#             status_class = "status-warning"
+#             summary_text = "⚠️ Your field is under mild stress"
+#             confidence = "Medium confidence"
+#             recommendations = [
+#                 "Reduce irrigation frequency if excessive",
+#                 "Improve air circulation between plants",
+#                 "Monitor affected areas daily",
+#                 "Please Check for Nutrient Deficiency and Water Stress"
+#             ]
+#         elif severity < 45:
+#             risk = "Moderate Stress"
+#             status_class = "status-danger"
+#             summary_text = "❌ Your field is under moderate stress"
+#             confidence = "High confidence"
+#             recommendations = [
+#                 "Apply preventive fungicide immediately",
+#                 "Avoid excess irrigation and overhead watering",
+#                 "Remove heavily infected plants if localized",
+#                 "Consider consulting agricultural expert"
+#             ]
+#         else:
+#             risk = "Severe Stress"
+#             status_class = "status-danger"
+#             summary_text = "❌ Your field is under severe stress"
+#             confidence = "High confidence"
+#             recommendations = [
+#                 "Apply systemic fungicide urgently (within 24 hours)",
+#                 "Consult agricultural extension officer immediately",
+#                 "Isolate affected field to prevent spread",
+#                 "Prepare for follow-up treatment in 7-10 days"
+#             ]
+
+#         st.markdown(f"""
+#         <div class="section-box">
+#             <div class="section-title">🌾 Field Health Summary</div>
+#             <div class="{status_class}">{summary_text}</div>
+#         </div>
+#         """, unsafe_allow_html=True)
+
+#         st.markdown('<div class="section-box"><div class="section-title">📊 How Your Land Is Doing</div></div>', unsafe_allow_html=True)
+
+#         col1, col2 = st.columns(2)
+        
+#         with col1:
+#             st.markdown(f'<div class="metric-card"><div class="metric-label">🌱 Healthy Area</div><div class="metric-value">{healthy_area:.0f}%</div></div>', unsafe_allow_html=True)
+#             st.markdown(f'<div class="metric-card"><div class="metric-label">⚠️ Needs Attention</div><div class="metric-value">{needs_attention:.0f}%</div></div>', unsafe_allow_html=True)
+        
+#         with col2:
+#             st.markdown(f'<div class="metric-card"><div class="metric-label">❌ Serious Stress</div><div class="metric-value">{serious_stress:.0f}%</div></div>', unsafe_allow_html=True)
+#             st.markdown(f'<div class="metric-card"><div class="metric-label">📍 Detected Spots</div><div class="metric-value">{num_detections}</div></div>', unsafe_allow_html=True)
+
+#         st.markdown('<div class="section-box"><div class="section-title">🖼️ Detection Result</div></div>', unsafe_allow_html=True)
+
+#         fig, ax = plt.subplots(1, 2, figsize=(16, 6))
+#         fig.patch.set_facecolor('white')
+
+#         ax[0].imshow(original_img)
+#         ax[0].set_title("Original Image", fontsize=14, fontweight='600', pad=12, color='#1e3c72')
+
+#         ax[1].imshow(ai_view)
+#         for box in boxes:
+#             x1, y1, x2, y2 = box
+#             ax[1].add_patch(patches.Rectangle((x1, y1), x2-x1, y2-y1, linewidth=2.5, edgecolor="#ffeb3b", facecolor="none"))
+#         ax[1].set_title(f"Disease Detection Output ({num_detections} spots detected)", fontsize=14, fontweight='600', pad=12, color='#1e3c72')
+
+#         for a in ax:
+#             a.axis("off")
+
+#         st.pyplot(fig)
+
+#         st.markdown('<div class="section-box"><div class="section-title">🔍 Why is this happening?</div>', unsafe_allow_html=True)
+
+#         if severity < 10:
+#             st.markdown('<div class="info-box">💧 Your crop appears healthy with no stress indicators detected.</div>', unsafe_allow_html=True)
+#         elif severity < 25:
+#             st.markdown('<div class="info-box-warning">💧 Early-stage rust infection detected. Environmental stress , Nutrient or Water stress may be contributing factors. Please Check for Nutrient Deficiency and Water Stress</div>', unsafe_allow_html=True)
+#         elif severity < 45:
+#             st.markdown('<div class="info-box-warning">💧 Moderate rust infection detected. Prolonged moisture and high humidity are likely causes.</div>', unsafe_allow_html=True)
+#         else:
+#             st.markdown('<div class="info-box-warning">💧 Severe rust infection detected. Immediate intervention required to prevent further spread.</div>', unsafe_allow_html=True)
+
+#         st.markdown("</div>", unsafe_allow_html=True)
+
+#         st.markdown(f'<div class="section-box"><div class="section-title">🎯 How sure is this result?</div><div style="margin: 14px 0;"><span style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 8px 18px; border-radius: 20px; font-weight: 600; color: #663c00;">🟡 {confidence}</span></div></div>', unsafe_allow_html=True)
+        
+#         confidence_value = 0.85 if num_detections > 10 else 0.65
+#         st.progress(confidence_value)
+
+#         st.markdown('<div class="section-box"><div class="section-title">🧑‍🌾 What should I do now?</div>', unsafe_allow_html=True)
+        
+#         for rec in recommendations:
+#             st.markdown(f'<div style="background: #f8f9fa; padding: 12px 16px; margin: 8px 0; border-radius: 8px; border-left: 4px solid #667eea;">{rec}</div>', unsafe_allow_html=True)
+        
+#         st.markdown("</div>", unsafe_allow_html=True)
+
+#         st.markdown('<div class="section-box"><div class="section-title">💬 Ask Questions (Hindi & English) | सवाल पूछें</div></div>', unsafe_allow_html=True)
+
+#         with st.expander("🌾 सामान्य प्रश्न | Common Questions", expanded=False):
+#             for question, answers in QA_DATA.items():
+#                 st.markdown(f"**Q: {question}**")
+#                 st.markdown(f"**English:** {answers['en']}")
+#                 st.markdown(f"<div class='hindi-text'><strong>हिंदी:</strong> {answers['hi']}</div>", unsafe_allow_html=True)
+#                 st.markdown("---")
+
+#         # st.markdown("### 🔍 Ask Your Own Question | अपना सवाल पूछें")
+#         # user_question = st.text_input("Type your question here...", placeholder="e.g., How long does treatment take?")
+        
+#         # if user_question:
+#         #     st.info(f"**Your Question:** {user_question}")
+#         #     st.markdown('<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 16px; border-radius: 8px; margin: 10px 0;"><strong>Note:</strong> For personalized advice, please consult with your local agricultural extension officer. This system provides general guidance based on common scenarios.<br><br><strong class="hindi-text">नोट:</strong> <span class="hindi-text">व्यक्तिगत सलाह के लिए, कृपया अपने स्थानीय कृषि विस्तार अधिकारी से परामर्श करें।</span></div>', unsafe_allow_html=True)
+        
+#         st.markdown("### 🔍 Ask Your Own Question | अपना सवाल पूछें")
+#         user_question = st.text_input("Type your question here...", placeholder="e.g., How long does treatment take?")
+
+#         if user_question:
+#             st.info(f"**Your Question:** {user_question}")
+    
+#             with st.spinner("🤔 Thinking..."):
+#                 try:
+#             # Configure Gemini API (set this in environment variable)
+#                     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+            
+#                     if not GEMINI_API_KEY:
+#                         st.warning("⚠️ AI service not configured. Showing basic response...")
+                
+#                 # Fallback to basic responses
+#                         if any(word in user_question.lower() for word in ['severity', 'percent', '%', 'score', 'why']):
+#                             answer = f"""**English:**
+# Your field shows {severity:.1f}% severity with {num_detections} disease spots detected. This indicates a {risk} condition. The severity is calculated based on infected area coverage and number of rust pustules visible in the image.
+
+# **हिंदी:**
+# आपके खेत में {severity:.1f}% गंभीरता के साथ {num_detections} रोग के धब्बे पाए गए हैं। यह एक {risk} स्थिति को दर्शाता है। गंभीरता की गणना संक्रमित क्षेत्र और छवि में दिखाई देने वाले रस्ट पस्ट्यूल्स की संख्या के आधार पर की जाती है।"""
+#                         else:
+#                             answer = """**English:**
+# For specific advice about your field condition, please consult with your local agricultural extension officer. General recommendation: Monitor your field regularly and follow the recommendations provided in the analysis above.
+
+# **हिंदी:**
+# आपके खेत की स्थिति के बारे में विशिष्ट सलाह के लिए, कृपया अपने स्थानीय कृषि विस्तार अधिकारी से परामर्श करें। सामान्य सिफारिश: अपने खेत की नियमित निगरानी करें और ऊपर दिए गए विश्लेषण में दी गई सिफारिशों का पालन करें।"""
+#                     else:
+#                         from google import genai
+#                         genai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+#                         # genai.configure(api_key=GEMINI_API_KEY)
+#                         # model = genai.GenerativeModel('gemini-1.5-flash')
+                
+#                         # Prepare context from current analysis
+#                         context = f"""
+#                         Current Analysis Results:
+#                         - Risk Level: {risk}
+#                         - Severity: {severity:.1f}%
+#                         - Healthy Area: {healthy_area:.0f}%
+#                         - Disease Spots Detected: {num_detections}
+#                         - Summary: {summary_text}
+#                         - Recommendations: {', '.join(recommendations)}
+#                         """
+                    
+#                         prompt = f"""You are an agricultural expert helping farmers with wheat crop disease management.
+
+# {context}
+
+# Farmer's Question: {user_question}
+
+# Please provide a helpful answer in both English and Hindi. If the question is about their current results, use the analysis data provided above. If it's a general farming question, provide expert agricultural advice.
+
+# Format your response exactly as:
+# **English:**
+# [Your answer in English]
+
+# **हिंदी:**
+# [Your answer in Hindi]
+
+# Keep answers practical, concise (3-4 sentences), and farmer-friendly."""
+                
+#                         response = genai_client.models.generate_content(
+#                             model = "gemini-2.5-flash",
+#                             contents = prompt
+#                         )
+#                         if response and response.candidates:
+#                             answer = response.candidates[0].content.parts[0].text
+#                         else:
+#                             raise ValueError("empty gemini response")
+            
+#                     st.markdown('<div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 18px; border-radius: 10px; margin: 12px 0; border-left: 5px solid #2196F3;">', unsafe_allow_html=True)
+#                     st.markdown(answer)
+#                     st.markdown('</div>', unsafe_allow_html=True)
+            
+#                 except Exception as e:
+#                     st.warning(f"⚠️ Could not get AI response. Showing basic answer...")
+            
+#             # Fallback response
+#                     if any(word in user_question.lower() for word in ['severity', 'percent', '%', 'score', 'why']):
+#                         answer = f"""**English:**
+# Based on the analysis, your field shows {severity:.1f}% severity level with {num_detections} rust spots detected. The risk level is assessed as "{risk}". Please follow the recommendations provided above for best results.
+
+# **हिंदी:**
+# विश्लेषण के आधार पर, आपके खेत में {severity:.1f}% गंभीरता स्तर के साथ {num_detections} रस्ट धब्बे पाए गए हैं। जोखिम स्तर "{risk}" के रूप में आंका गया है। सर्वोत्तम परिणामों के लिए कृपया ऊपर दी गई सिफारिशों का पालन करें।"""
+#                     else:
+#                         answer = """**English:**
+# For best disease management: (1) Apply fungicides as recommended, (2) Improve field drainage, (3) Monitor weather conditions, (4) Consult your local agricultural officer for region-specific advice.
+
+# **हिंदी:**
+# सर्वोत्तम रोग प्रबंधन के लिए: (1) अनुशंसित कवकनाशी लगाएं, (2) खेत की जल निकासी में सुधार करें, (3) मौसम की स्थिति की निगरानी करें, (4) क्षेत्र-विशिष्ट सलाह के लिए अपने स्थानीय कृषि अधिकारी से परामर्श करें।"""
+            
+#                     st.markdown('<div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 18px; border-radius: 10px; margin: 12px 0; border-left: 5px solid #2196F3;">', unsafe_allow_html=True)
+#                     st.markdown(answer)
+#                     st.markdown('</div>', unsafe_allow_html=True)
+    
+#             st.markdown('<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 16px; border-radius: 8px; margin: 10px 0;"><strong>Note:</strong> For personalized advice, please consult with your local agricultural extension officer. This system provides general guidance based on common scenarios.<br><br><strong class="hindi-text">नोट:</strong> <span class="hindi-text">व्यक्तिगत सलाह के लिए, कृपया अपने स्थानीय कृषि विस्तार अधिकारी से परामर्श करें।</span></div>', unsafe_allow_html=True)
+
+#         st.markdown('<div class="section-box"><div class="section-title">📥 Download Report & Results</div></div>', unsafe_allow_html=True)
+
+#         col1, col2, col3 = st.columns(3)
+        
+#         pdf_buffer = generate_pdf_report(severity, num_detections, risk, summary_text, recommendations, timestamp)
+        
+#         with col1:
+#             st.download_button(
+#                 label="📄 Download PDF Report",
+#                 data=pdf_buffer,
+#                 file_name=f"wheat_rust_report_{timestamp}.pdf",
+#                 mime="application/pdf",
+#                 use_container_width=True
+#             )
+        
+#         with col2:
+#             st.download_button(
+#                 label="🖼️ Download Detection Image",
+#                 data=cv2.imencode(".png", cv2.cvtColor(ai_view, cv2.COLOR_RGB2BGR))[1].tobytes(),
+#                 file_name=f"detection_{timestamp}.png",
+#                 mime="image/png",
+#                 use_container_width=True
+#             )
+        
+#         with col3:
+#             st.download_button(
+#                 label="🗺️ Download ExG Heatmap",
+#                 data=cv2.imencode(".png", exg_heatmap)[1].tobytes(),
+#                 file_name=f"heatmap_{timestamp}.png",
+#                 mime="image/png",
+#                 use_container_width=True
+#             )
+
+#         os.remove(img_path)
+
+#     else:
+#         st.markdown('<div class="info-box">👆 Please upload a wheat crop image to begin analysis</div>', unsafe_allow_html=True)
+        
+# if __name__ == "__main__":
+#     run_disease_detection()
+
+
 
 import streamlit as st
 import os
@@ -1722,6 +2456,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.units import inch
 from google import genai
 from dotenv import load_dotenv
+import base64
+import asyncio
 load_dotenv()
 # =================================================
 # PAGE CONFIG
@@ -1923,6 +2659,34 @@ def run_disease_detection():
         font-weight: 600 !important;
     }
 
+    .voice-box {
+        background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+        border: 2px solid #00acc1;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,172,193,0.15);
+    }
+
+    .voice-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #006064;
+        margin-bottom: 14px;
+    }
+
+    .voice-script-box {
+        background: #ffffff;
+        border: 1px solid #b2dfdb;
+        border-radius: 8px;
+        padding: 14px 18px;
+        margin-top: 12px;
+        font-family: 'Noto Sans Devanagari', sans-serif;
+        font-size: 14px;
+        line-height: 1.9;
+        color: #2c3e50;
+    }
+
     footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
@@ -2071,6 +2835,109 @@ def run_disease_detection():
         exg = 2 * green - red - blue
         exg_norm = cv2.normalize(exg, None, 0, 255, cv2.NORM_MINMAX).astype("uint8")
         return 255 - exg_norm
+
+    # =================================================
+    # HINDI VOICE SUMMARY FUNCTION
+    # =================================================
+    def generate_hindi_voice_summary(severity, healthy_area, needs_attention, serious_stress, num_detections, risk, recommendations):
+        """
+        Generates a natural, human-like Hindi voice summary of the field health report.
+
+        Primary:  edge-tts  →  Microsoft Azure Neural TTS (hi-IN-SwaraNeural)
+                               This is the most human-like, natural-sounding Hindi female voice.
+        Fallback: gTTS      →  Google TTS (also good, requires internet).
+
+        Returns (hindi_script: str, audio_bytes: bytes).
+        """
+
+        # ── Hindi translations for recommendations ──────────────────────────────
+        rec_map = {
+            "Continue regular monitoring": "नियमित निगरानी जारी रखें।",
+            "Maintain current irrigation schedule": "वर्तमान सिंचाई कार्यक्रम बनाए रखें।",
+            "Schedule next inspection in 2 weeks": "अगले दो हफ्ते में फिर से जांच करवाएं।",
+            "No immediate action required": "अभी किसी तत्काल कदम की जरूरत नहीं है।",
+            "Continue regular field monitoring every 2 weeks": "हर दो हफ्ते में खेत की जांच करते रहें।",
+            "Maintain current irrigation and fertilization practices": "वर्तमान सिंचाई और उर्वरक की प्रक्रिया जारी रखें।",
+            "Keep records for future comparison": "भविष्य की तुलना के लिए रिकॉर्ड रखें।",
+            "Please Check for Nutrient Deficiency and Water Stress": "पोषक तत्वों की कमी और पानी के तनाव की जांच करें।",
+            "Reduce irrigation frequency if excessive": "यदि सिंचाई अधिक हो रही है तो उसे कम करें।",
+            "Improve air circulation between plants": "पौधों के बीच हवा के प्रवाह को बेहतर बनाएं।",
+            "Monitor affected areas daily": "प्रभावित क्षेत्रों की हर दिन निगरानी करें।",
+            "Apply preventive fungicide immediately": "तुरंत निवारक कवकनाशी का छिड़काव करें।",
+            "Avoid excess irrigation and overhead watering": "अत्यधिक सिंचाई और ऊपर से पानी देने से बचें।",
+            "Remove heavily infected plants if localized": "यदि संक्रमण सीमित क्षेत्र में हो तो गंभीर रूप से संक्रमित पौधों को हटा दें।",
+            "Consider consulting agricultural expert": "कृषि विशेषज्ञ से सलाह लेने पर विचार करें।",
+            "Apply systemic fungicide urgently (within 24 hours)": "चौबीस घंटे के भीतर तत्काल प्रणालीगत कवकनाशी का छिड़काव करें।",
+            "Consult agricultural extension officer immediately": "तुरंत कृषि विस्तार अधिकारी से संपर्क करें।",
+            "Isolate affected field to prevent spread": "फैलाव रोकने के लिए प्रभावित खेत को अलग करें।",
+            "Prepare for follow-up treatment in 7-10 days": "सात से दस दिनों में अनुवर्ती उपचार के लिए तैयार रहें।",
+        }
+
+        rec_lines_hindi = []
+        for i, rec in enumerate(recommendations, 1):
+            clean_rec = rec.replace("✅ ", "").replace("⚠️ ", "").replace("❌ ", "").strip()
+            hindi_rec = rec_map.get(clean_rec, clean_rec)
+            rec_lines_hindi.append(f"{i}. {hindi_rec}")
+        recs_hindi_text = " ".join(rec_lines_hindi)
+
+        risk_hindi_map = {
+            "No Disease Detected": "कोई रोग नहीं पाया गया",
+            "Healthy": "स्वस्थ",
+            "Needs Attention": "ध्यान देने की जरूरत है",
+            "Moderate Stress": "मध्यम तनाव",
+            "Severe Stress": "गंभीर तनाव",
+        }
+        risk_hi = risk_hindi_map.get(risk, risk)
+
+        # ── Natural Hindi script ─────────────────────────────────────────────────
+        script = f"""नमस्ते किसान भाई।
+
+फार्म स्पेक्ट्रा की ओर से आपके खेत की जांच रिपोर्ट तैयार हो गई है।
+
+आपके खेत की स्थिति {risk_hi} है।
+
+आपके खेत का स्वस्थ क्षेत्र {healthy_area:.0f} प्रतिशत है।
+{needs_attention:.0f} प्रतिशत क्षेत्र पर ध्यान देने की जरूरत है।
+{serious_stress:.0f} प्रतिशत क्षेत्र गंभीर तनाव में है।
+कुल {num_detections} रोग के धब्बे पाए गए हैं।
+
+अब आपको क्या करना चाहिए।
+{recs_hindi_text}
+
+याद रखें, समय पर उपाय करने से आपकी फसल की रक्षा हो सकती है।
+किसी भी मदद के लिए अपने नज़दीकी कृषि विशेषज्ञ से ज़रूर मिलें।
+
+धन्यवाद। फार्म स्पेक्ट्रा हमेशा आपके साथ है।""".strip()
+
+        # ── PRIMARY: edge-tts  (Microsoft Azure Neural — hi-IN-SwaraNeural) ──────
+        # SwaraNeural is a warm, natural-sounding Indian Hindi female voice.
+        # MadhurNeural is the male alternative.
+        async def _edge_tts_audio(text: str, voice: str = "hi-IN-SwaraNeural") -> bytes:
+            import edge_tts
+            communicate = edge_tts.Communicate(text, voice)
+            audio_chunks = []
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    audio_chunks.append(chunk["data"])
+            return b"".join(audio_chunks)
+
+        try:
+            audio_bytes = asyncio.run(_edge_tts_audio(script))
+            return script, audio_bytes
+        except Exception:
+            pass  # Fall through to gTTS
+
+        # ── FALLBACK: gTTS (Google TTS) ──────────────────────────────────────────
+        try:
+            from gtts import gTTS
+            tts = gTTS(text=script, lang='hi', slow=False)
+            audio_buffer = BytesIO()
+            tts.write_to_fp(audio_buffer)
+            audio_buffer.seek(0)
+            audio_bytes = audio_buffer.read()
+            return script, audio_bytes
+        except Exception as e:
+            raise RuntimeError(f"Both TTS engines failed: {e}")
 
     # =================================================
     # UPLOAD SECTION
@@ -2282,6 +3149,59 @@ def run_disease_detection():
         
         st.markdown("</div>", unsafe_allow_html=True)
 
+        # =================================================
+        # 🔊 HINDI VOICE SUMMARY SECTION
+        # =================================================
+        st.markdown('<div class="voice-box"><div class="voice-title">🔊 खेत की रिपोर्ट सुनें | Listen to Field Report in Hindi</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<p style="color:#00695c; font-size:14px; margin-bottom:14px;">'
+            'नीचे दिए गए बटन पर क्लिक करें और अपनी खेत की पूरी रिपोर्ट हिंदी में सुनें। '
+            'यह सुविधा उन किसानों के लिए है जो पढ़ने में कठिनाई महसूस करते हैं।'
+            '</p>',
+            unsafe_allow_html=True
+        )
+
+        with st.spinner("🎙️ हिंदी ऑडियो तैयार हो रहा है..."):
+            try:
+                hindi_script, audio_bytes = generate_hindi_voice_summary(
+                    severity, healthy_area, needs_attention, serious_stress,
+                    num_detections, risk, recommendations
+                )
+
+                # Render inline audio player — autoplay is intentionally off for user control
+                audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+                audio_html = f"""
+                <audio controls style="width:100%; margin-top:8px; border-radius:8px;">
+                    <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+                    आपका ब्राउज़र ऑडियो को सपोर्ट नहीं करता।
+                </audio>
+                """
+                st.markdown(audio_html, unsafe_allow_html=True)
+
+                # Also offer download of the audio file
+                st.download_button(
+                    label="⬇️ हिंदी ऑडियो डाउनलोड करें | Download Hindi Audio",
+                    data=audio_bytes,
+                    file_name=f"field_report_hindi_{timestamp}.mp3",
+                    mime="audio/mp3",
+                    use_container_width=True
+                )
+
+                # Show the Hindi script text in an expandable section
+                with st.expander("📄 हिंदी स्क्रिप्ट देखें | View Hindi Script"):
+                    st.markdown(
+                        f'<div class="voice-script-box">{hindi_script.replace(chr(10), "<br>")}</div>',
+                        unsafe_allow_html=True
+                    )
+
+            except Exception as e:
+                st.warning(f"⚠️ ऑडियो बनाने में समस्या हुई: {str(e)}. कृपया इंटरनेट कनेक्शन जांचें।")
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        # =================================================
+        # Q&A SECTION
+        # =================================================
         st.markdown('<div class="section-box"><div class="section-title">💬 Ask Questions (Hindi & English) | सवाल पूछें</div></div>', unsafe_allow_html=True)
 
         with st.expander("🌾 सामान्य प्रश्न | Common Questions", expanded=False):
@@ -2291,13 +3211,6 @@ def run_disease_detection():
                 st.markdown(f"<div class='hindi-text'><strong>हिंदी:</strong> {answers['hi']}</div>", unsafe_allow_html=True)
                 st.markdown("---")
 
-        # st.markdown("### 🔍 Ask Your Own Question | अपना सवाल पूछें")
-        # user_question = st.text_input("Type your question here...", placeholder="e.g., How long does treatment take?")
-        
-        # if user_question:
-        #     st.info(f"**Your Question:** {user_question}")
-        #     st.markdown('<div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 16px; border-radius: 8px; margin: 10px 0;"><strong>Note:</strong> For personalized advice, please consult with your local agricultural extension officer. This system provides general guidance based on common scenarios.<br><br><strong class="hindi-text">नोट:</strong> <span class="hindi-text">व्यक्तिगत सलाह के लिए, कृपया अपने स्थानीय कृषि विस्तार अधिकारी से परामर्श करें।</span></div>', unsafe_allow_html=True)
-        
         st.markdown("### 🔍 Ask Your Own Question | अपना सवाल पूछें")
         user_question = st.text_input("Type your question here...", placeholder="e.g., How long does treatment take?")
 
@@ -2306,13 +3219,11 @@ def run_disease_detection():
     
             with st.spinner("🤔 Thinking..."):
                 try:
-            # Configure Gemini API (set this in environment variable)
                     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
             
                     if not GEMINI_API_KEY:
                         st.warning("⚠️ AI service not configured. Showing basic response...")
                 
-                # Fallback to basic responses
                         if any(word in user_question.lower() for word in ['severity', 'percent', '%', 'score', 'why']):
                             answer = f"""**English:**
 Your field shows {severity:.1f}% severity with {num_detections} disease spots detected. This indicates a {risk} condition. The severity is calculated based on infected area coverage and number of rust pustules visible in the image.
@@ -2329,10 +3240,6 @@ For specific advice about your field condition, please consult with your local a
                         from google import genai
                         genai_client = genai.Client(api_key=GEMINI_API_KEY)
 
-                        # genai.configure(api_key=GEMINI_API_KEY)
-                        # model = genai.GenerativeModel('gemini-1.5-flash')
-                
-                        # Prepare context from current analysis
                         context = f"""
                         Current Analysis Results:
                         - Risk Level: {risk}
@@ -2376,7 +3283,6 @@ Keep answers practical, concise (3-4 sentences), and farmer-friendly."""
                 except Exception as e:
                     st.warning(f"⚠️ Could not get AI response. Showing basic answer...")
             
-            # Fallback response
                     if any(word in user_question.lower() for word in ['severity', 'percent', '%', 'score', 'why']):
                         answer = f"""**English:**
 Based on the analysis, your field shows {severity:.1f}% severity level with {num_detections} rust spots detected. The risk level is assessed as "{risk}". Please follow the recommendations provided above for best results.

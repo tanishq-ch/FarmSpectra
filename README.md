@@ -61,6 +61,43 @@ FarmSpectra provides:
 
 ## ✨ Key Features
 
+
+### 🌊 Nutrient & Water Stress Detection Module
+
+<table>
+<tr>
+<td width="50%">
+
+#### Core Capabilities
+- ✅ **NDVI Calculation** from RGB + NIR image pairs
+- 📊 **Stress Classification** (Barren → Healthy vegetation)
+- 🗺️ **NDVI Heatmap Generation** (RdYlGn colormap)
+- 🎨 **Stress Zone Mapping** with 4-level classification
+- 📈 **Health Metrics Dashboard**
+  - Healthy area percentage
+  - Moderate stress zones
+  - Severe stress areas
+  - Barren / no-crop zones
+
+</td>
+<td width="50%">
+
+#### Advanced Features
+- 💧 **Drought vs. Nutrient Deficiency** root cause detection
+- 🎯 **Confidence Scoring** for diagnosis reliability
+- 🔊 **Hindi Voice Summary** (gTTS audio output)
+- 📄 **PDF Report Generation** with farmer-friendly language
+- ⚡ **Dual Image Input** (RGB + NIR channel processing)
+- 💾 **Downloadable Results**
+  - NDVI heatmap visualization
+  - Stress classification map
+  - Comprehensive PDF reports
+  - Hindi audio summary (MP3)
+
+</td>
+</tr>
+</table>
+
 ### 🔬 Disease Detection Module
 
 <table>
@@ -137,31 +174,42 @@ graph TB
     A[User Upload Image] --> B{Image Preprocessing}
     B --> C[Disease Detection Module]
     B --> D[Weed Detection Module]
-    
-    C --> E[YOLOv8 Segmentation Model]
-    E --> F[Mask Generation]
-    F --> G[Severity Calculation]
-    G --> H[ExG Heatmap]
-    
-    D --> I[YOLOv8 Detection Model]
-    I --> J[Bounding Box Detection]
-    J --> K[Weed Count & Classification]
-    
-    H --> L[Results Dashboard]
-    K --> L
-    
-    L --> M[PDF Report Generator]
-    L --> N[AI Q&A System]
-    
-    N --> O[Gemini 2.5 Flash]
-    O --> P[Bilingual Responses]
-    
-    M --> Q[Download Reports]
-    P --> Q
-    
+    B --> E[Nutrient & Water Stress Module]
+
+    C --> F[YOLOv8 Segmentation Model]
+    F --> G[Mask Generation]
+    G --> H[Severity Calculation]
+    H --> I[ExG Heatmap]
+
+    D --> J[YOLOv8 Detection Model]
+    J --> K[Bounding Box Detection]
+    K --> L[Weed Count & Classification]
+
+    E --> M[NDVI Calculation RGB+NIR]
+    M --> N[Stress Zone Mapping]
+    N --> O{Root Cause Analysis}
+    O --> P[Drought Score]
+    O --> Q[Nutrient Score]
+    P & Q --> R[Confidence Scoring]
+
+    I --> S[Results Dashboard]
+    L --> S
+    R --> S
+
+    S --> T[PDF Report Generator]
+    S --> U[AI Q&A System]
+    S --> V[Hindi Voice Summary]
+
+    U --> W[Gemini 2.5 Flash]
+    W --> X[Bilingual Responses]
+
+    T --> Y[Download Reports]
+    X --> Y
+    V --> Y
+
     style A fill:#e1f5ff
-    style L fill:#fff3cd
-    style Q fill:#d4edda
+    style S fill:#fff3cd
+    style Y fill:#d4edda
 ```
 
 ### 🔄 Processing Pipeline
@@ -219,6 +267,7 @@ FarmSpectra/
 │   │   └── rust_detector.py        # Disease detection inference
 │   │
 │   └── 📂 streamlit/
+|       ├── Nutrient.py             # Nutrient and Water Stress detection app
 │       ├── app.py                  # Disease detection app
 │       ├── Wheat_Weed_app.py       # Weed detection app
 │       └── main.py                 # Main navigation app
@@ -321,6 +370,29 @@ streamlit run src/streamlit/app.py
 ```bash
 streamlit run src/streamlit/Wheat_Weed_app.py
 ```
+
+### 🌊 Using the Nutrient & Water Stress Module
+
+1. **Upload Images**
+   - Upload an RGB image of the field
+   - Upload a corresponding NIR (Near-Infrared) image
+   - Both images should cover the same field area
+
+2. **View NDVI Analysis**
+   - NDVI stress classification map (4 zones: Barren → Healthy)
+   - Health metrics: healthy, moderate, severe, and barren percentages
+
+3. **Understand Root Cause**
+   - System diagnoses whether stress is from **Drought (water shortage)** or **Nutrient Deficiency**
+   - Confidence indicator shows reliability of the diagnosis
+
+4. **Follow Recommendations**
+   - Irrigation and watering guidance for drought stress
+   - Soil testing and fertilizer advice for nutrient deficiency
+
+5. **Download & Listen**
+   - Download a PDF report with field summary and action plan
+   - Play Hindi voice summary for vernacular accessibility
 
 ### 🖼️ Using the Disease Detection Module
 
@@ -554,6 +626,8 @@ response = client.models.generate_content(
 | ![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-blue) | 4.8+ | Image processing |
 | ![Gemini](https://img.shields.io/badge/Gemini-2.5_Flash-orange) | 2.5 | AI-powered Q&A |
 | ![NumPy](https://img.shields.io/badge/NumPy-Latest-blue) | Latest | Numerical computing |
+| ![gTTS](https://img.shields.io/badge/gTTS-Hindi_Voice-yellow) | Latest | Hindi voice report generation |
+
 
 ### 🖥️ Web Framework & UI
 
