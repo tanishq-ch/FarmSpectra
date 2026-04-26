@@ -1,4 +1,4 @@
-# 🌾 FarmSpectra - AI-Powered Crop Disease & Weed Detection System
+# 🌾 FarmSpectra - Pre-emptive Crop Health Monitoring and Intervention System
 
 <div align="center">
 
@@ -38,24 +38,27 @@
 
 ## 🌟 Overview
 
-**FarmSpectra** is a comprehensive AI-powered platform designed to revolutionize wheat crop management through intelligent disease and weed detection. Built with cutting-edge deep learning models and an intuitive interface, FarmSpectra empowers farmers with actionable insights to protect their crops and maximize yields.
+**FarmSpectra** is a comprehensive platform designed to revolutionize crop health monitoring through intelligent detection of nutrient deficiency, drought stress, weed infestation, and crop disease. Built with cutting-edge deep learning models, spectral analysis, and an intuitive interface, FarmSpectra empowers farmers and agronomists with actionable, data-driven insights to protect their crops and maximize yields.
 
 ### 🎯 Problem Statement
 
-Wheat rust disease and weed infestation cause significant crop losses globally, reducing yields by up to 50%. Traditional manual inspection is:
-- ⏰ Time-consuming and labor-intensive
-- 👁️ Prone to human error and delayed detection
-- 📊 Lacks quantitative severity assessment
-- 🌍 Limited by agricultural expertise availability
+India's agricultural sector, which supports over half the country's population, suffers from significant productivity challenges due to monitoring inefficiencies and delayed detection of crop stress. Traditional manual inspection methods are:
+- ⏰ Time-consuming, labor-intensive, and subjective
+- 👁️ Unable to detect stress before visible symptoms appear
+- 📊 Incapable of providing quantitative, spatial stress assessments
+- 🌍 Not scalable to medium and large farm sizes
+
+Research indicates that **30–40% of annual crop yield loss** in India results from poor monitoring and late detection of stress factors such as nutrient deficiencies, drought, weed growth, and disease outbreaks.
 
 ### 💡 Our Solution
 
-FarmSpectra provides:
-- 🤖 **Real-time AI Detection** - Instant disease and weed identification from field images
-- 📊 **Quantitative Analysis** - Precise severity metrics and affected area calculation
-- 🌡️ **Multi-Modal Insights** - ExG heatmaps for vegetation stress visualization
-- 💬 **Bilingual Support** - English and Hindi Q&A powered by Gemini AI
-- 📄 **Professional Reports** - Downloadable PDF reports with treatment recommendations
+FarmSpectra provides a unified, UAV-based spectral analysis and deep learning platform that detects crop stress **before visible damage occurs**, offering:
+- 🛰️ **NDVI-Based Stress Mapping** — Multispectral RGB + NIR imagery for nutrient deficiency and drought stress detection
+- 🤖 **Real-time AI Detection** — Instant weed identification and disease classification from field images
+- 📊 **Quantitative Analysis** — Precise severity metrics, zone-wise health percentages, and confidence scoring
+- 🌡️ **Multi-Modal Insights** — NDVI heatmaps, ExG overlays, and stress classification maps
+- 💬 **Bilingual Support** — English and Hindi Q&A powered by Gemini AI, plus Hindi voice summaries
+- 📄 **Professional Reports** — Downloadable PDF reports with treatment recommendations
 
 ---
 
